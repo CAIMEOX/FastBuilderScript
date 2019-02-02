@@ -46,9 +46,9 @@ function read(msg, opts){
 	};
 
 	let $position = [
-		parseInt(hasFlags(args, '$x', '--x')) || opts.position[0],
-		parseInt(hasFlags(args, '$y', '--y')) || opts.position[1],
-		parseInt(hasFlags(args, '$z', '--z')) || opts.position[2],
+		parseInt(hasFlags(args, '$x', '-x')) || opts.position[0],
+		parseInt(hasFlags(args, '$y', '-y')) || opts.position[1],
+		parseInt(hasFlags(args, '$z', '-z')) || opts.position[2],
 	];
 
 	out.header = {
