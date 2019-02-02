@@ -68,7 +68,7 @@ class Algorithms {
                   map:[0,0,0]
               }
               break;
-          default:break;
+          default: return {foo:type,map:[0,0,0]};
           }
     }
 

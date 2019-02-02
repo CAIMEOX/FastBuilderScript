@@ -1,3 +1,6 @@
+let cmdList = ['round','circle','ellipse','ellipsoid','cone','torus','sphere','su','help','let'];
+
+
 function toArr(any) {
 	return any == null ? [] : Array.isArray(any) ? any : [any];
 }
@@ -14,7 +17,7 @@ function hasFlags(argv, input, alias){
 
 function isCmd(args) {
 	if(args == undefined)return false;
-	cmdList = ['round','circle','ellipse','ellipsoid','cone','torus','sphere','su','help','let','paint']
+	
 	for(let key in cmdList){
 		if(!!~args.indexOf(cmdList[key])){
 			return true;
@@ -32,7 +35,11 @@ function getType(args){
 }
 
 
-function read(msg, opts){
+function read(msg, opts,mts){
+	for(let i of mts){
+		cmdList.push(i[0]);
+	}
+
 	args = msg.trim().split(" ") || [];
 	opts = opts || {};
 
@@ -45,12 +52,18 @@ function read(msg, opts){
 		isSudo:!!~args.indexOf('sudo') || opts.su,
 	};
 
+	let $position = [
+		parseInt(hasFlags(args, '$x', '--x')) || opts.position[0],
+		parseInt(hasFlags(args, '$y', '--y')) || opts.position[1],
+		parseInt(hasFlags(args, '$z', '--z')) || opts.position[2],
+	];
+
 	out.header = {
 			position:!!~args.indexOf('-p') ? [
 				parseInt(args[args.indexOf('-p') + 1]),
 				parseInt(args[args.indexOf('-p') + 2]),
 				parseInt(args[args.indexOf('-p') + 3])
-			] : toArr(opts.position),
+			] : $position,
 			block:hasFlags(args, '-b', '--block') || opts.block,
 			data:hasFlags(args, '-d', '--data') || opts.data,
 			method:hasFlags(args, '-m', '--method') || opts.method,
@@ -62,7 +75,7 @@ function read(msg, opts){
 	out.collect = {
 		get:!!~args.indexOf('get') ? args[args.indexOf('get') + 1] : false,
 		locate:!!~args.indexOf('locate') ? args[args.indexOf('locate') + 1] : false,
-		writeData:!!~args.indexOf('let') || !!~args.indexOf('let')
+		writeData:!!~args.indexOf('let') || !!~args.indexOf('var')
 	}
 
 	out.server = {
@@ -90,13 +103,11 @@ function read(msg, opts){
 		entityMod:hasFlags(args, '-y', '--entityMod') || false,
 		path:hasFlags(args, '-z', '--path') || false
 	};
+	for(let i of mts){
+		out.build[i[2]]=hasFlags(args, i[3], i[4]) || false;
+	}
 
 	return out;
 }
-// console.log(cis(['w','sudo','-dssrh','-zsssa','--dzx','y','5','6'],{
-// 	p:[1,2,3],
-// 	b:'iron_block',
-// 	d:0,
-// 	m:'replace'
-// }));
+
 module.exports = read;

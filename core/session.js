@@ -1,10 +1,18 @@
 const readMessage = require('./argv');
 const Algorithms = require('./algorithms');
 const helps = require('./profile').helps;
-const color = require('../script/colortables');
-const get_pixels = require('get-pixels');
+const scripts=require("../script/main");
+//const color = require('../script/colortables');
+//const get_pixels = require('get-pixels');
 
 let $default = {};
+let $history = {
+  players:[],
+  locate:[],
+  position:[]
+};
+
+var methods=[];
 
 class BuildSession {
   static createAndBind (session){
@@ -27,10 +35,13 @@ class BuildSession {
       $data:0,
       entity:'ender_crystal'
     }
+	for(let i of scripts){
+		i(this);
+	}
   }
 
   onChatMessage (msg, player, files){
-    let x = readMessage(msg, $header());
+    let x = readMessage(msg, $header(),methods);
     if(x.server.close){
       this.sendText('FastBuilder disconnecting...');
       this.session.sendCommand('closewebsocket');
@@ -67,16 +78,29 @@ class BuildSession {
       }
       return true;
     }else if(args.showhelp){
-	if(args.error){
-		this.sendText(helps[args.showhelp],"§4");
-	}else{
-        	this.sendText(helps[args.showhelp]);
-	}
-        return true;
+	    if(args.error){
+		     this.sendText(helps[args.showhelp],'§4');
+      }else{
+        this.sendText(helps[args.showhelp]);
+      }
+      return true;
     }else{
       return false;
     }
   }
+
+	subscribe(method,cb,name,short,long){
+		methods.push([method,cb,name,short,long]);
+		global.subscribed=method;
+	}
+
+	findScript(args,player,msg,method){
+		for(let i of methods){
+			if(i[0]==method){
+				i[1](args,player,msg);
+			}
+		}
+	}
 
   doit(args, player, msg){
     console.log(args);
@@ -114,7 +138,11 @@ class BuildSession {
         return;
       }
 
-      if(build.entityMod){
+      /*if(foo == 'paint'){
+        this.sendText(now() + 'Loading pixels painting module..','§e');
+      }*/
+
+      else if(build.entityMod){
         this.sendText(now() + 'Time need: ' + ((map.length * delays * build.height) / 1000) + 's.');
       }
       else{
@@ -140,127 +168,71 @@ class BuildSession {
             this.setLongEntity(header.su, map, build.height, entity, delays);
             break;
 
-          case 'paint':
+          /*case 'paint':
             this.Paint(build.path, position[0], position[1], position[2]);
-            break;
+            break;*/
 
           default:
-		throw new Error("Unknown");
-            //console.log(now() + 'Unknown error!!Exiting...');
-            //process.exit();
+		        this.findScript(args,player,msg,foo);//throw new Error('Unknown function.');
             break;
         }
     }
 
     if(collect.writeData){
       $header(true, header);
-      this.sendText('Data wrote!');
+      this.sendText(now() + 'Data wrote!');
     }
 
     if(collect.get){
     this.getValue(collect.get);
     }
+
     else if(collect.locate){
-      this.session.sendCommand(['locate ',collect.locate].join(' '));
-      let that = this;
-      let $t = setTimeout(() => {
-        let $a = that.getValue('locate').join(' ');
-        that.session.sendCommand(['tp','@s',$a].join(' '));
-        that.sendText([now(),'FastLocate: ',collect.locate].join(' '));
-      }, 150);
+      this.getValue('locate',collect.locate);
     }
   }
 
-  getValue(type){
+  getValue(type, other){
     let that = this;
+
     if(type == 'pos' || type == 'position'){
-      this.session.sendCommand(['testforblock','~','~','~','air'].join(' '));
-       let $b = setInterval(() =>{
-         $default.position = this.session.getHistory('position','last');
-		if($default.position==undefined)return;
-         that.sendText(now() + 'Position get: ' + $default.position.join(' '));
-		clearInterval($b);
-		this.session.killHistory("position","last");
-       },50);
-    }else if(type == 'player' || type == 'players'){
-      this.session.sendCommand('listd');
-      let $c = setInterval(() => {
-	let his=that.session.getHistory('players','last');
-	if(his==null)return;
-        let $arr = toArray(his);
-        console.log($arr)
-        let $p = '';
-        for(let i = 0 ; i < $arr.length ; i++){
-          $p = [$p,i,'.',$arr[i],'; '].join('');
-        }
-        that.sendText(now() + 'Online players: ' + $p);
-	clearInterval($c);
-	this.session.killHistory("position","last");
-      }, 50);
-    }else if(type == 'locate'){
-      let $d = this.session.getHistory('locate','last');
-      return $d;
+      this.session.sendCommand(['testforblock','~','~','~','air'].join(' '),(body) => {
+        let pos = [body.position.x,body.position.y,body.position.z];
+        $default.position = pos;
+        $history.position.push(pos);
+        this.sendText('Position get: ' + $default.position.join(' '));
+      });
     }
-  }
 
-  Paint(path, x, y, z){
-	if(path==""){this.showhelp({showhelp:"paint",error:true});return;}
-    this.sendText('Drawing')
-    let BuildList = [];
-    get_pixels(path, (err, pixels) => {
-      if(err){
-        this.sendText(err)
-        return;
-      }
+    else if(type == 'player' || type == 'players'){
+      this.session.sendCommand('listd',(body) => {
+        let $players = body.players;
+        $history.players.push($players);
 
-      let arr = pixels.data;
-      let All = [];
-      let $d = [];
-
-      for (let i = 0 ; i < arr.length; i++){
-        $d.push(arr[i]);
-        if(i != 0 && (i + 1) % 4 == 0){
-          All.push($d);
-          $d = [];
+        console.log($players)
+        let $p = '';
+        for(let i = 0 ; i < $history.players[$history.players.length - 1].length ; i++){
+          $p = [$p,i,'.',$history.players[$history.players.length - 1][i],'; '].join('');
         }
-      }
 
-      for(let i = 0 ; i < All.length ; i ++){
-        BuildList.push(get_color(All[i][0], All[i][1], All[i][2], All[i][3]));
-      }
+        this.sendText(now() + 'Online players: ' + $p);
+      });
+    }
 
-      this.draw(BuildList, pixels.shape[0], pixels.shape[1], parseInt(x), parseInt(y), parseInt(z));
-    });
-  }
-
-  draw(map, w, h, x, y, z){
-    this.sendText(now() + 'Drawing image...');
-    this.sendText(now() + 'Paint: time need: ' + (map.length / 100) + 's.');
-    let max = w + x;
-    let min = x;
-    let t = 0;
-    let that = this
-    let $i = setInterval( () => {
-      if(x == max){
-        z = z + 1;
-        x = min;
-      }
-
-      that.session.sendCommand([
-        'setblock',
-        x = x + 1,
-        y,
-        z,
-        map[t][0],
-        map[t][1]
-      ].join(' '));
-
-      t++;
-      if(t == map.length){
-	this.sendText(now()+"Paint: Done.");
-        clearInterval($i);
-      }
-    }, 10);
+    else if(type == 'locate'){
+      this.session.sendCommand(['locate',other].join(' '),(body) => {
+        if(!body.destination){
+          this.sendText('Feature not found!');
+          return;
+        }
+        else{
+          let $locate = [body.destination.x,body.destination.y,body.destination.z];
+          $history.locate.push($locate);
+          this.sendText('Feature found: ' + $locate.join(' '));
+          this.session.sendCommand('tp '+ $locate.join(' '));
+        }
+      });
+    }
   }
 
   setTile(root, list, block, data, mod, delays){
