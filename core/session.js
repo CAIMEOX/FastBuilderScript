@@ -1,6 +1,6 @@
 const readMessage = require('./argv');
 const Algorithms = require('./algorithms');
-const helps = require('./profile').helps;
+var helps = require('./profile').helps;
 const scripts=require("../script/main");
 //const color = require('../script/colortables');
 //const get_pixels = require('get-pixels');
@@ -13,6 +13,7 @@ let $history = {
 };
 
 var methods=[];
+var argz=[];
 
 class BuildSession {
   static createAndBind (session){
@@ -41,7 +42,7 @@ class BuildSession {
   }
 
   onChatMessage (msg, player, files){
-    let x = readMessage(msg, $header(),methods);
+    let x = readMessage(msg, $header(),methods,argz);
     if(x.server.close){
       this.sendText('FastBuilder disconnecting...');
       this.session.sendCommand('closewebsocket');
@@ -89,9 +90,16 @@ class BuildSession {
     }
   }
 
-	subscribe(method,cb,name,short,long){
-		methods.push([method,cb,name,short,long]);
-		global.subscribed=method;
+	subscribe(method,cb){
+		methods.push([method,cb]);
+	}
+
+	registerArgs(name,sarg,slarg){
+		argz.push([name,sarg,slarg]);
+	}
+
+	registerHelp(cmd,help){
+		helps[cmd]=help;
 	}
 
 	findScript(args,player,msg,method){

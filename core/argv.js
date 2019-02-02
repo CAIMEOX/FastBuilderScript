@@ -35,7 +35,7 @@ function getType(args){
 }
 
 
-function read(msg, opts,mts){
+function read(msg, opts,mts,argz){
 	for(let i of mts){
 		cmdList.push(i[0]);
 	}
@@ -102,9 +102,8 @@ function read(msg, opts,mts){
 		height:parseInt(hasFlags(args, '-h', '--height') || 1),
 		entityMod:hasFlags(args, '-y', '--entityMod') || false
 	};
-	for(let i of mts){
-		if(i[2]==undefined)continue;
-		out.build[i[2]]=hasFlags(args, i[3], i[4]) || false;
+	for(let i of argz){
+		out.build[i[0]]=hasFlags(args, i[1], i[2]) || false;
 	}
 
 	return out;

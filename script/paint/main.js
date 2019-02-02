@@ -46,7 +46,9 @@ method = method == 'normal' ? 'replace':[method,$block,$data].join(' ');
 
 function main(session){
 	ss=session;
-	ss.subscribe("paint",dopaint,"path","-z","--path");
+	ss.subscribe("paint",dopaint);
+	ss.registerArgs("path","-z","--path");
+	ss.registerHelp("paint","paint -z <path:String>");
 	console.log("PaintingGenerator script loaded.");
 }
 
