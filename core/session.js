@@ -1,6 +1,6 @@
 const readMessage = require('./argv');
 const Algorithms = require('./algorithms');
-var helps = require('./profile').helps;
+let helps = require('./profile').helps;
 const scripts=require("../script/main");
 //const color = require('../script/colortables');
 //const get_pixels = require('get-pixels');
@@ -12,8 +12,8 @@ let $history = {
   position:[]
 };
 
-var methods=[];
-var argz=[];
+let methods=[];
+let argz=[];
 
 class BuildSession {
   static createAndBind (session){
@@ -383,7 +383,7 @@ function now(){
 
 function getMin(arr){
   let min = arr[0]
-  for(var i = 1; i < arr.length; i++) {
+  for(let i = 1; i < arr.length; i++) {
   let cur = arr[i];
   cur < min ? min = cur : null
 }

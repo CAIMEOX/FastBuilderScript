@@ -2,11 +2,11 @@ const color = require('./colortables');
 const get_pixels = require('get-pixels');
 const Algorithms = require('../../core/algorithms');
 
-var ss=null;
+let ss;
 
 function getMin(arr){
   let min = arr[0];
-  for(var i = 1; i < arr.length; i++) {
+  for(let i = 1; i < arr.length; i++) {
   let cur = arr[i];
   cur < min ? min = cur : null
 }
