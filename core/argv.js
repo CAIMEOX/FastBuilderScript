@@ -103,6 +103,7 @@ function read(msg, opts,mts){
 		entityMod:hasFlags(args, '-y', '--entityMod') || false
 	};
 	for(let i of mts){
+		if(i[2]==undefined)continue;
 		out.build[i[2]]=hasFlags(args, i[3], i[4]) || false;
 	}
 
