@@ -186,7 +186,7 @@ class BuildSession {
       this.session.sendCommand('listd');
       let $c = setInterval(() => {
 	let his=that.session.getHistory('players','last');
-	if(his==undefined)return;
+	if(his==null)return;
         let $arr = toArray(his);
         console.log($arr)
         let $p = '';

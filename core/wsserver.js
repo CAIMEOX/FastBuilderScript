@@ -106,13 +106,13 @@ class Session extends EventEmitter {
       if(key == 'last'){
         switch (type) {
           case 'position':
-          History.position[History.position.length - 1]=undefined;
+          History.position[History.position.length - 1]=null;
           break;
           case 'locate':
-          History.locate[History.locate.length - 1]=undefined;
+          History.locate[History.locate.length - 1]=null;
           break;
           case 'players':
-          History.players[History.players.length -1]=undefined;
+          History.players[History.players.length -1]=null;
           break;
           default:break;
         }
