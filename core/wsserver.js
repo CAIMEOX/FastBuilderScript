@@ -101,6 +101,23 @@ class Session extends EventEmitter {
         }
       }
     }
+
+	killHistory(type, key){
+      if(key == 'last'){
+        switch (type) {
+          case 'position':
+          History.position[History.position.length - 1]=undefined;
+          break;
+          case 'locate':
+          History.locate[History.locate.length - 1]=undefined;
+          break;
+          case 'players':
+          History.players[History.players.length -1]=undefined;
+          break;
+          default:break;
+        }
+      }else{throw new Error("killHistory only can kill last.");}
+    }
 }
 
 module.exports = WSServer;

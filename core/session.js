@@ -180,6 +180,7 @@ class BuildSession {
 		if($default.position==undefined)return;
          that.sendText(now() + 'Position get: ' + $default.position.join(' '));
 		clearInterval($b);
+		this.session.killHistory("position","last");
        },50);
     }else if(type == 'player' || type == 'players'){
       this.session.sendCommand('listd');
@@ -194,6 +195,7 @@ class BuildSession {
         }
         that.sendText(now() + 'Online players: ' + $p);
 	clearInterval($c);
+	this.session.killHistory("position","last");
       }, 50);
     }else if(type == 'locate'){
       let $d = this.session.getHistory('locate','last');
