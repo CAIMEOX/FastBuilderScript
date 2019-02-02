@@ -100,8 +100,7 @@ function read(msg, opts,mts){
 		width:parseInt(hasFlags(args, '-w', '--width') || 0),
 		length:parseInt(hasFlags(args, '-l', '--length') || 0),
 		height:parseInt(hasFlags(args, '-h', '--height') || 1),
-		entityMod:hasFlags(args, '-y', '--entityMod') || false,
-		path:hasFlags(args, '-z', '--path') || false
+		entityMod:hasFlags(args, '-y', '--entityMod') || false
 	};
 	for(let i of mts){
 		out.build[i[2]]=hasFlags(args, i[3], i[4]) || false;
