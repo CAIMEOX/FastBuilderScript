@@ -1,6 +1,8 @@
 const color = require('./colortables');
 const get_pixels = require('get-pixels');
 
+var ss=null;
+
 function getMin(arr){
   let min = arr[0]
   for(var i = 1; i < arr.length; i++) {
@@ -19,6 +21,11 @@ function get_color(r, g, b) {
         List.push(Math.sqrt((r1 * r1) + (g1 * g1) + (b1 * b1)));
     }
     return [color[List.indexOf(getMin(List))].name,color[List.indexOf(getMin(List))].data];
+}
+
+function main(session){
+	ss=session;
+	ss.subscribe("paint",dopaint);
 }
 
 function Paint(path, x, y, z){
@@ -72,3 +79,5 @@ function draw(map, w, h, x, y, z){
     }
   }, 10);
 }
+
+module.exports=main;

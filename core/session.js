@@ -1,8 +1,8 @@
 const readMessage = require('./argv');
 const Algorithms = require('./algorithms');
 const helps = require('./profile').helps;
-const color = require('../script/colortables');
-const get_pixels = require('get-pixels');
+//const color = require('../script/colortables');
+//const get_pixels = require('get-pixels');
 
 let $default = {};
 let $history = {
@@ -10,6 +10,8 @@ let $history = {
   locate:[],
   position:[]
 };
+
+var methods=[];
 
 class BuildSession {
   static createAndBind (session){
@@ -83,6 +85,18 @@ class BuildSession {
     }
   }
 
+	subscribe(method,cb){
+		methods.push([method,cb]);
+	}
+
+	findScript(args,player,msg,method){
+		for(let i of methods){
+			if(i[0]==method){
+				i[1](args,player,msg);
+			}
+		}
+	}
+
   doit(args, player, msg){
     console.log(args);
     let {main, header, build, collect, server} = args;
@@ -119,9 +133,9 @@ class BuildSession {
         return;
       }
 
-      if(foo == 'paint'){
+      /*if(foo == 'paint'){
         this.sendText(now() + 'Loading pixels painting module..','§e');
-      }
+      }*/
 
       else if(build.entityMod){
         this.sendText(now() + 'Time need: ' + ((map.length * delays * build.height) / 1000) + 's.');
@@ -154,7 +168,7 @@ class BuildSession {
             break;
 
           default:
-		        throw new Error('Unknown function.');
+		        this.findScript(args,player,msg,foo);//throw new Error('Unknown function.');
             break;
         }
     }
