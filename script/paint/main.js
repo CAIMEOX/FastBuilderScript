@@ -44,7 +44,7 @@ method = method == 'normal' ? 'replace':[method,$block,$data].join(' ');
 function main(api){
 	ss=api;
 	ss.registerCommand("paint",dopaint);
-	ss.registerArgs("path","-z","--path");
+	ss.registerArgs("path","-z","--path",String,"");
 	ss.registerHelp("paint","paint -z <path:String>");
 	console.log("PaintingGenerator script loaded.");
 }

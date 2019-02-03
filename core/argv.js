@@ -1,6 +1,10 @@
+const arg=require("./arg");
+
 let cmdList = ['round','circle','ellipse','ellipsoid','cone','torus','sphere','su','help','let',"stopall"];
 
 class CommandLine{
+constructor(){}
+
 toArr(any) {
 	return any == null ? [] : Array.isArray(any) ? any : [any];
 }
@@ -35,12 +39,12 @@ getType(args){
 }
 
 
-static read(msg, opts,mts,argz){
+read(msg, opts,mts,argz){
 	for(let i of mts){
 		cmdList.push(i[0]);
 	}
 
-	args = msg.trim().split(" ") || [];
+	let args = msg.trim().split(" ") || [];
 	opts = opts || {};
 
 	let out = {};
@@ -52,24 +56,66 @@ static read(msg, opts,mts,argz){
 		isSudo:!!~args.indexOf('sudo') || opts.su,
 	};
 
-	let $position = [
-		parseInt(hasFlags(args, '$x', '--x')) || opts.position[0],
-		parseInt(hasFlags(args, '$y', '--y')) || opts.position[1],
-		parseInt(hasFlags(args, '$z', '--z')) || opts.position[2],
+	let $flags={
+		"--x":Number,
+		"--y":Number,
+		"--z":Number,
+		"-p":[Number],
+		"-b":String,
+		"--block":"-b",
+		"-d":Number,
+		"--data":"-d",
+		"-m":String,
+		"--method":"-m",
+		"-2":String,
+		"-3":Number,
+		"-e":String,
+		"--block2":"-2",
+		"--data2":"-3",
+		"--entity":"-e",
+		"--list":Boolean,
+		"--help":Boolean,
+		"-f":String,
+		"-s":String,
+		"--shape":"-s",
+		"--facing":"-f",
+		"-r":Number,
+		"--radius":"-r",
+		"-a":Number,
+		"--accuracy":"-a",
+		"-t":Number,
+		"--times":"-t",
+		"-w":Number,
+		"--width":"-w",
+		"-l":Number,
+		"--length":"-l",
+		"-h":Number,
+		"--height":"-h",
+		"-y":Boolean,
+		"--entityMod":"-y"
+	};
+
+	for(let i of argz){
+		$flags[i[1]]=i[3];
+		$flags[i[2]]=i[1];
+	}
+
+	try{let garg=arg($flags,{argv:args.slice(1)});}catch(err){out.error=err;return out;}
+
+	let $position=[
+		garg["--x"]||opts.position[0],
+		garg["--y"]||opts.position[1],
+		garg["--z"]||opts.position[2]
 	];
 
-	out.header = {
-			position:!!~args.indexOf('-p') ? [
-				parseInt(args[args.indexOf('-p') + 1]),
-				parseInt(args[args.indexOf('-p') + 2]),
-				parseInt(args[args.indexOf('-p') + 3])
-			] : $position,
-			block:this.hasFlags(args, '-b', '--block') || opts.block,
-			data:this.hasFlags(args, '-d', '--data') || opts.data,
-			method:this.hasFlags(args, '-m', '--method') || opts.method,
-			$block:this.hasFlags(args, '-b2', '--block2') || opts.$block,
-			$data:this.hasFlags(args, '-d2', '--data2') || opts.$data,
-			entity:this.hasFlags(args, '-e', '--entity') || opts.entity
+	out.header={
+		position:(garg["-p"]==undefined||garg["-p"][2]==undefined)?$position : [garg["-p"][0],garg["-p"][1],garg["-p"][2]],
+		block:garg["-b"]||opts.block,
+		data:garg["-d"]||opts.data,
+		method:garg["-m"]||opts.method,
+		$block:garg["-b2"]||opts.$block,
+		$data:garg["-d2"]||opts.$data,
+		entity:garg["-e"]||opts.entity
 	};
 
 	out.collect = {
@@ -83,29 +129,29 @@ static read(msg, opts,mts,argz){
 		screenfetch:!!~args.indexOf('screenfetch'),
 		stopall:!!~args.indexOf("stopall"),
 		helpMessage:(!!~args.indexOf('help') && args.length == 1),
-		listHelp:(!!~args.indexOf('help') && !!~args.indexOf('-l')) || (!!~args.indexOf('help') && !!~args.indexOf('--list')),
+		listHelp:(!!~args.indexOf('help') && garg["--list"]),
 		showhelp:args[0] == 'help' ? args[1] :
-		(args[1] == 'h') || (args[1] == 'help' || args[1] == '-h' || args[1] == '--help') ?
+		garg["--help"] ?
 		args[0] : false
 	}
 
-
-
 	out.build = {
 		type:this.getType(args),
-		direction:this.hasFlags(args, '-f', '--facing') || 'y',
-		shape:this.hasFlags(args, '-s', '--shape') || 'hollow',
-		radius:parseInt(this.hasFlags(args, '-r', '--radius') || 0),
-		accuracy:parseInt(this.hasFlags(args, '-a', '--accuracy') || 50),
-		delays:parseInt(this.hasFlags(args, '-t', '--times') || 10),
-		width:parseInt(this.hasFlags(args, '-w', '--width') || 0),
-		length:parseInt(this.hasFlags(args, '-l', '--length') || 0),
-		height:parseInt(this.hasFlags(args, '-h', '--height') || 1),
-		entityMod:this.hasFlags(args, '-y', '--entityMod') || false
+		direction:garg["-f"] || 'y',
+		shape:garg["-s"] || 'hollow',
+		radius:garg["-r"] || 0,
+		accuracy:garg["-a"] || 50,
+		delays:garg["-t"] || 10,
+		width:garg["-w"] || 0,
+		length:garg["-l"] || 0,
+		height:garg["-h"] || 1,
+		entityMod:garg["-y"] || false
 	};
+
 	for(let i of argz){
-		out.build[i[0]]=this.hasFlags(args, i[1], i[2]) || false;
+		out.build[i[0]]=garg[i[1]]||i[4];
 	}
+	
 
 	return out;
 }

@@ -11,8 +11,8 @@ class ScriptApi{
 		session.$scrdo(0,method,cb);
 	}
 
-	registerArgs(name,longopt,shortopt){
-		session.$scrdo(1,name,longopt,shortopt);
+	registerArgs(name,longopt,shortopt,type,def){
+		session.$scrdo(1,name,longopt,shortopt,type,def);
 	}
 
 	registerHelp(name,help){

@@ -1,4 +1,4 @@
-const CommandLine = require('./argv');
+const CommandLine = new (require('./argv'))();
 const Algorithms = require('./algorithms');
 let helps = require('./profile').helps;
 const scripts=require("../script/main");
@@ -51,6 +51,10 @@ class BuildSession {
 
   onChatMessage (msg, player, files){
     let x = CommandLine.read(msg, $header(),methods,argz);
+	if(x.error!=undefined){
+		this.sendText("Unable to read your command line:"+x.error,"§4");
+		return;
+	}
     if(x.server.close){
       this.sendText('FastBuilder disconnecting...');
       this.session.sendCommand('closewebsocket');
@@ -103,12 +107,12 @@ class BuildSession {
     }
   }
 
-	$scrdo(m,a,b,c){
+	$scrdo(m,a,b,c,d,e){
 		if(m==0){
 			methods.push([a,b]);
 			return;
 		}else if(m==1){
-			argz.push([a,b,c]);
+			argz.push([a,b,c,d,e]);
 			return;
 		}else if(m==2){
 			helps[a]=b;
