@@ -1,11 +1,11 @@
 let cmdList = ['round','circle','ellipse','ellipsoid','cone','torus','sphere','su','help','let',"stopall"];
 
-
-function toArr(any) {
+class CommandLine{
+toArr(any) {
 	return any == null ? [] : Array.isArray(any) ? any : [any];
 }
 
-function hasFlags(argv, input, alias){
+hasFlags(argv, input, alias){
 	if(!!~argv.indexOf(input)){
 		return argv[argv.indexOf(input) + 1];
 	}else if(!!~argv.indexOf(alias)){
@@ -15,7 +15,7 @@ function hasFlags(argv, input, alias){
 	}
 }
 
-function isCmd(args) {
+isCmd(args) {
 	if(args == undefined)return false;
 	
 	for(let key in cmdList){
@@ -26,16 +26,16 @@ function isCmd(args) {
 	return false;
 }
 
-function getType(args){
+getType(args){
 	for (let i in args){
-		if(isCmd(args[i])){
+		if(this.isCmd(args[i])){
 			return args[i]
 		}
 	}
 }
 
 
-function read(msg, opts,mts,argz){
+read(msg, opts,mts,argz){
 	for(let i of mts){
 		cmdList.push(i[0]);
 	}
@@ -46,7 +46,7 @@ function read(msg, opts,mts,argz){
 	let out = {};
 
 	out.main = {
-		isCmd:isCmd(args),
+		isCmd:this.isCmd(args),
 		toRoot:!!~args.indexOf('sudo') && !!~args.indexOf('su'),
 		exitRoot:!!~args.indexOf('sudo') && !!~args.indexOf('exit'),
 		isSudo:!!~args.indexOf('sudo') || opts.su,
@@ -64,12 +64,12 @@ function read(msg, opts,mts,argz){
 				parseInt(args[args.indexOf('-p') + 2]),
 				parseInt(args[args.indexOf('-p') + 3])
 			] : $position,
-			block:hasFlags(args, '-b', '--block') || opts.block,
-			data:hasFlags(args, '-d', '--data') || opts.data,
-			method:hasFlags(args, '-m', '--method') || opts.method,
-			$block:hasFlags(args, '-b2', '--block2') || opts.$block,
-			$data:hasFlags(args, '-d2', '--data2') || opts.$data,
-			entity:hasFlags(args, '-e', '--entity') || opts.entity
+			block:this.hasFlags(args, '-b', '--block') || opts.block,
+			data:this.hasFlags(args, '-d', '--data') || opts.data,
+			method:this.hasFlags(args, '-m', '--method') || opts.method,
+			$block:this.hasFlags(args, '-b2', '--block2') || opts.$block,
+			$data:this.hasFlags(args, '-d2', '--data2') || opts.$data,
+			entity:this.hasFlags(args, '-e', '--entity') || opts.entity
 	};
 
 	out.collect = {
@@ -92,22 +92,24 @@ function read(msg, opts,mts,argz){
 
 
 	out.build = {
-		type:getType(args),
-		direction:hasFlags(args, '-f', '--facing') || 'y',
-		shape:hasFlags(args, '-s', '--shape') || 'hollow',
-		radius:parseInt(hasFlags(args, '-r', '--radius') || 0),
-		accuracy:parseInt(hasFlags(args, '-a', '--accuracy') || 50),
-		delays:parseInt(hasFlags(args, '-t', '--times') || 10),
-		width:parseInt(hasFlags(args, '-w', '--width') || 0),
-		length:parseInt(hasFlags(args, '-l', '--length') || 0),
-		height:parseInt(hasFlags(args, '-h', '--height') || 1),
-		entityMod:hasFlags(args, '-y', '--entityMod') || false
+		type:this.getType(args),
+		direction:this.hasFlags(args, '-f', '--facing') || 'y',
+		shape:this.hasFlags(args, '-s', '--shape') || 'hollow',
+		radius:parseInt(this.hasFlags(args, '-r', '--radius') || 0),
+		accuracy:parseInt(this.hasFlags(args, '-a', '--accuracy') || 50),
+		delays:parseInt(this.hasFlags(args, '-t', '--times') || 10),
+		width:parseInt(this.hasFlags(args, '-w', '--width') || 0),
+		length:parseInt(this.hasFlags(args, '-l', '--length') || 0),
+		height:parseInt(this.hasFlags(args, '-h', '--height') || 1),
+		entityMod:this.hasFlags(args, '-y', '--entityMod') || false
 	};
 	for(let i of argz){
-		out.build[i[0]]=hasFlags(args, i[1], i[2]) || false;
+		out.build[i[0]]=this.hasFlags(args, i[1], i[2]) || false;
 	}
 
 	return out;
 }
 
-module.exports = read;
+}
+
+module.exports = CommandLine;
