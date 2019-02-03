@@ -31,6 +31,10 @@ class ScriptApi{
 		session.session.sendCommand(cmd,cb);
 	}
 
+	showhelp(help,opts){
+		session.showhelp(help,opts);
+	}
+
 	get stopall(){
 		return session.stopall;
 	}

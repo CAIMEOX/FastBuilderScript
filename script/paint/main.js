@@ -94,6 +94,7 @@ function draw(map, w, h, x, y, z){
     let max = w + x;
     let min = x;
     let t = 0;
+	ss.stopall=false;
     let $i = setInterval( () => {
 	    if(ss.stopall){
 		    ss.stopall=false;

@@ -234,7 +234,7 @@ class Algorithms {
         let session = [];
         a = a * 1;
         c = c * 1;
-        let session = [];
+        //let session = [];
         let accuracy = 1 / f;
         let umin = 0;
         let umax = Math.PI * 2;

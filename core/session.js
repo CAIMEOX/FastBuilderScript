@@ -137,7 +137,7 @@ class BuildSession {
     if(main.isCmd){
 
       this.sendText(($default.su ? 'root' : player) + '@FastBuilder: ' + msg);
-      this.showhelp(args.server);
+      if(this.showhelp(args.server))return;
 
       let {map, foo} = Algorithms.Builder(header,build) || {};
 
@@ -253,6 +253,7 @@ class BuildSession {
   }
 
   setTile(root, list, block, data, mod, delays){
+	this.stopall=false
     let t = 0;
     let that = this;
     let interval = setInterval(() => {
@@ -279,6 +280,7 @@ class BuildSession {
   }
 
   setLongTile(root, list, len, direction, block, data, mod, delays){
+	this.stopall=false;
     let t = 0;
     let dx = direction == 'x' ? len : 0;
     let dy = direction == 'y' ? len : 0;
@@ -308,6 +310,7 @@ class BuildSession {
   }
 
   fillTile(root, list, block, data, mod, delays){
+	this.stopall=false;
     let that = this;
     let t = 0;
     let interval = setInterval(function () {
@@ -334,6 +337,7 @@ class BuildSession {
   }
 
   setEntity(root, list, entity, delays){
+	this.stopall=false;
     let t = 0;
     let that = this;
     let interval = setInterval(() => {
@@ -372,6 +376,7 @@ class BuildSession {
         }
       }
     };
+	this.stopall=false;
     let interval = setInterval(() => {
 	    if(that.stopall){
 		    that.stopall=false;
