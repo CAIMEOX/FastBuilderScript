@@ -75,6 +75,8 @@ read(msg, opts,mts,argz){
 		"--entity":"-e",
 		"--list":Boolean,
 		"--help":Boolean,
+		"-h":"--help",
+		"-l":"--list",
 		"-f":String,
 		"-s":String,
 		"--shape":"-s",
@@ -87,10 +89,8 @@ read(msg, opts,mts,argz){
 		"--times":"-t",
 		"-w":Number,
 		"--width":"-w",
-		"-l":Number,
-		"--length":"-l",
-		"-h":Number,
-		"--height":"-h",
+		"--length":Number,
+		"--height":Number,
 		"-y":Boolean,
 		"--entityMod":"-y"
 	};
@@ -143,8 +143,8 @@ read(msg, opts,mts,argz){
 		accuracy:garg["-a"] || 50,
 		delays:garg["-t"] || 10,
 		width:garg["-w"] || 0,
-		length:garg["-l"] || 0,
-		height:garg["-h"] || 1,
+		length:garg["--length"] || 0,
+		height:garg["--height"] || 1,
 		entityMod:garg["-y"] || false
 	};
 
