@@ -3,8 +3,6 @@ const Algorithms = require('./algorithms');
 let helps = require('./profile').helps;
 const scripts=require("../script/main");
 const ScriptApi=require("./scriptapi");
-//const color = require('../script/colortables');
-//const get_pixels = require('get-pixels');
 
 let $default = {};
 let $history = {
@@ -50,15 +48,15 @@ class BuildSession {
   }
 
   onChatMessage (msg, player, files){
-    let x = CommandLine.read(msg, $header(),methods,argz);
-	if(x.error!=undefined){
+    let x = CommandLine.read(msg, $default,methods,argz);
+	if(x.error){
 		this.sendText("Unable to read your command line:"+x.error,"§4");
 		return;
 	}
     if(x.server.close){
       this.sendText('FastBuilder disconnecting...');
       this.session.sendCommand('closewebsocket');
-	    return;
+      return;
     }else if(x.server.screenfetch){
       this.sendText('screenfetch' +
       '\n§bMinecraftVersion: §a' + files.Build +
@@ -96,25 +94,21 @@ class BuildSession {
       }
       return true;
     }else if(args.showhelp){
-	    if(args.error){
-		     this.sendText(helps[args.showhelp],'§4');
-      }else{
-        this.sendText(helps[args.showhelp]);
-      }
-      return true;
+        this.sendText(helps[args.showhelp],args.error ? '§4' : '§b');
+        return true;
     }else{
       return false;
     }
   }
 
 	$scrdo(m,a,b,c,d,e){
-		if(m==0){
+		if(m == 0){
 			methods.push([a,b]);
 			return;
-		}else if(m==1){
+		}else if(m == 1){
 			argz.push([a,b,c,d,e]);
 			return;
-		}else if(m==2){
+		}else if(m == 2){
 			helps[a]=b;
 		}else{
 			throw new Error("Invalid call");
@@ -131,7 +125,7 @@ class BuildSession {
 
   doit(args, player, msg){
     console.log(args);
-    let {main, header, build, collect, server} = args;
+    let {main, header, build, collect} = args;
     let {position, block, data, method, $block, $data, entity} = header;
     let delays = build.delays;
 
@@ -165,11 +159,7 @@ class BuildSession {
         return;
       }
 
-      /*if(foo == 'paint'){
-        this.sendText(now() + 'Loading pixels painting module..','§e');
-      }*/
-
-      else if(build.entityMod){
+      if(build.entityMod){
         this.sendText(now() + 'Time need: ' + ((map.length * delays * build.height) / 1000) + 's.');
       }
       else{
@@ -195,18 +185,14 @@ class BuildSession {
             this.setLongEntity(header.su, map, build.height, entity, delays);
             break;
 
-          /*case 'paint':
-            this.Paint(build.path, position[0], position[1], position[2]);
-            break;*/
-
           default:
-		        this.findScript(args,player,msg,foo);//throw new Error('Unknown function.');
+		        this.findScript(args,player,msg,foo);
             break;
         }
     }
 
     if(collect.writeData){
-      $header(true, header);
+      $default = header;
       this.sendText(now() + 'Data wrote!');
     }
 
@@ -404,18 +390,6 @@ class BuildSession {
       }
     }, delays);
   }
-}
-
-function $header(r,opts){
-  if(r){
-    $default.position = opts.position;
-    $default.block = opts.block;
-    $default.data = opts.data;
-    $default.method = opts.method;
-    $default.su = opts.su;
-  }
-  console.log($default);
-  return $default;
 }
 
 function onPlayerMessage(body){

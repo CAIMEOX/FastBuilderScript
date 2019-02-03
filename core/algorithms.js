@@ -2,7 +2,6 @@ class Algorithms {
     static Builder (header, build) {
         let $b = new Algorithms();
         this.header = header;
-        this.build = build;
         let [x,y,z] = header.position;
 
         let {
@@ -11,12 +10,10 @@ class Algorithms {
             shape,
             radius,
             accuracy,
-            delays,
             width,
             length,
             height,
-            entityMod,
-            path
+            entityMod
         } = build;
 
         switch (type) {
@@ -211,11 +208,6 @@ class Algorithms {
         return session;
     }
 
-    static ellipseh(d, a, b, x, y, z){
-      let session = [];
-
-    }
-
     static ellipsoid(a, b, c, x, y, z) {
         let session = [];
         for (let i = -a; i <= a; i++) {
@@ -234,7 +226,6 @@ class Algorithms {
         let session = [];
         a = a * 1;
         c = c * 1;
-        //let session = [];
         let accuracy = 1 / f;
         let umin = 0;
         let umax = Math.PI * 2;
