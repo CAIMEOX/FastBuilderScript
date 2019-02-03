@@ -1,4 +1,4 @@
-const readMessage = require('./argv');
+const CommandLine = require('./argv');
 const Algorithms = require('./algorithms');
 let helps = require('./profile').helps;
 const scripts=require("../script/main");
@@ -50,7 +50,7 @@ class BuildSession {
   }
 
   onChatMessage (msg, player, files){
-    let x = readMessage(msg, $header(),methods,argz);
+    let x = CommandLine.read(msg, $header(),methods,argz);
     if(x.server.close){
       this.sendText('FastBuilder disconnecting...');
       this.session.sendCommand('closewebsocket');

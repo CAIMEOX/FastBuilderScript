@@ -10,7 +10,7 @@ class WSServer extends WebSocket.Server {
     constructor (port, processor) {
         super({ port: port });
         this.sessions = new Set();
-        this.on('connection', onConn);
+        this.on('connection', onConnection);
         if (processor) this.on('client', processor);
     }
 }
@@ -122,7 +122,7 @@ class Session extends EventEmitter {
 
 module.exports = WSServer;
 
-function onConn(socket, req) {
+function onConnection(socket, req) {
     let session = new Session(this, socket);
     this.sessions.add(session);
     this.emit('client', session, req);
