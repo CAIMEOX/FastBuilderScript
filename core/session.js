@@ -2,6 +2,7 @@ const readMessage = require('./argv');
 const Algorithms = require('./algorithms');
 let helps = require('./profile').helps;
 const scripts=require("../script/main");
+const ScriptApi=require("./scriptapi");
 //const color = require('../script/colortables');
 //const get_pixels = require('get-pixels');
 
@@ -19,6 +20,7 @@ class BuildSession {
   static createAndBind (session){
     let r = new BuildSession();
     r.session = session;
+	  r.stopall=false;
     r.init();
     return r;
   }
@@ -37,7 +39,7 @@ class BuildSession {
       entity:'ender_crystal'
     }
 	for(let i of scripts){
-		i(this);
+		i(new ScriptApi(this));
 	}
   }
 
@@ -46,6 +48,7 @@ class BuildSession {
     if(x.server.close){
       this.sendText('FastBuilder disconnecting...');
       this.session.sendCommand('closewebsocket');
+	    return;
     }else if(x.server.screenfetch){
       this.sendText('screenfetch' +
       '\n§bMinecraftVersion: §a' + files.Build +
@@ -54,6 +57,10 @@ class BuildSession {
       '\n§bUserGamemode: §a' + files.PlayerGameMode +
       '\n§bBiome: §a' + files.Biome +
       '\n§bOS: §a' + (files.Plat != '' ? files.Plat : files.ClientId));
+	    return;
+      }else if(x.server.stopall){
+	      this.stopall=true;
+	      return;
       }
     this.doit(x, player, msg);
   }
@@ -90,16 +97,18 @@ class BuildSession {
     }
   }
 
-	subscribe(method,cb){
-		methods.push([method,cb]);
-	}
-
-	registerArgs(name,sarg,slarg){
-		argz.push([name,sarg,slarg]);
-	}
-
-	registerHelp(cmd,help){
-		helps[cmd]=help;
+	$scrdo(m,a,b,c){
+		if(m==0){
+			methods.push([a,b]);
+			return;
+		}else if(m==1){
+			argz.push([a,b,c]);
+			return;
+		}else if(m==2){
+			helps[a]=b;
+		}else{
+			throw new Error("Invalid call");
+		}
 	}
 
 	findScript(args,player,msg,method){
@@ -247,6 +256,12 @@ class BuildSession {
     let t = 0;
     let that = this;
     let interval = setInterval(() => {
+	    if(that.stopall==true){
+		    that.stopall=false;
+		    that.sendText(now()+"Structure generate has been stopped!");
+		    clearInterval(interval);
+		    return;
+	    }
       that.session.sendCommand([
         'fill',
         list[t][0],list[t][1],list[t][2],
@@ -270,6 +285,12 @@ class BuildSession {
     let dz = direction == 'z' ? len : 0;
     let that = this;
     let interval = setInterval(function() {
+	   if(that.stopall==true){
+		   that.stopall=false;
+		   that.sendText(now()+"Structure generate has been stopped!");
+		   clearInterval(interval);
+		   return;
+	   }
       that.session.sendCommand([
         'fill',
         list[t][0],list[t][1],list[t][2],
@@ -290,6 +311,12 @@ class BuildSession {
     let that = this;
     let t = 0;
     let interval = setInterval(function () {
+	if(that.stopall==true){
+		that.stopall=false;
+		that.sendText(now()+"Structure generate has been stopped!");
+		clearInterval(interval);
+		return;
+	}
       that.session.sendCommand([
         'fill',
         list[t][0], list[t][1], list[t][2],
@@ -310,6 +337,12 @@ class BuildSession {
     let t = 0;
     let that = this;
     let interval = setInterval(() => {
+	    if(that.stopall){
+		    that.stopall=false;
+		    that.sendText(now()+"Generate stopped");
+		    clearInterval(interval);
+		    return;
+	    }
       that.session.sendCommand([
         'summon',
         entity,
@@ -340,6 +373,12 @@ class BuildSession {
       }
     };
     let interval = setInterval(() => {
+	    if(that.stopall){
+		    that.stopall=false;
+		    that.sendText(now()+"Generate stopped");
+		    clearInterval(interval);
+		    return;
+	    }
       that.session.sendCommand([
         'summon',
         entity,

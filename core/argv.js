@@ -1,4 +1,4 @@
-let cmdList = ['round','circle','ellipse','ellipsoid','cone','torus','sphere','su','help','let'];
+let cmdList = ['round','circle','ellipse','ellipsoid','cone','torus','sphere','su','help','let',"stopall"];
 
 
 function toArr(any) {
@@ -81,6 +81,7 @@ function read(msg, opts,mts,argz){
 	out.server = {
 		close:!!~args.indexOf('closewebsocket'),
 		screenfetch:!!~args.indexOf('screenfetch'),
+		stopall:!!~args.indexOf("stopall"),
 		helpMessage:(!!~args.indexOf('help') && args.length == 1),
 		listHelp:(!!~args.indexOf('help') && !!~args.indexOf('-l')) || (!!~args.indexOf('help') && !!~args.indexOf('--list')),
 		showhelp:args[0] == 'help' ? args[1] :

@@ -1,7 +1,6 @@
 const color = require('./colortables');
 const get_pixels = require('get-pixels');
 const Algorithms = require('../../core/algorithms');
-
 let ss;
 
 function getMin(arr){
@@ -36,16 +35,16 @@ method = method == 'normal' ? 'replace':[method,$block,$data].join(' ');
 
       let {map, foo} = Algorithms.Builder(header,build) || {};
 
-        ss.sendText(now() + 'Loading pixels painting module..','§e');
+        ss.sendText(ss.now() + 'Loading pixels painting module..','§e');
 
-      ss.sendText(now() + 'Please wait patiently!');
+      ss.sendText(ss.now() + 'Please wait patiently!');
 
             Paint(build.path, position[0], position[1], position[2]);
 }
 }
 
-function main(session){
-	ss=session;
+function main(api){
+	ss=api;
 	ss.subscribe("paint",dopaint);
 	ss.registerArgs("path","-z","--path");
 	ss.registerHelp("paint","paint -z <path:String>");
@@ -60,10 +59,10 @@ function Paint(path, x, y, z){
     });
     return;
   }
-    ss.sendText(now() + 'PaintingGenerator: Loaded.','§e');
+    ss.sendText(ss.now() + 'PaintingGenerator: Loaded.','§e');
     let BuildList = [];
     get_pixels(path, (err, pixels) => {
-      ss.sendText(now() + 'PaintingGenerator: Start loading image from the path.','§e');
+      ss.sendText(ss.now() + 'PaintingGenerator: Start loading image from the path.','§e');
       if(err){
         ss.sendText('PaintingGenerator: ' + err, '§e');
         return;
@@ -90,19 +89,24 @@ function Paint(path, x, y, z){
   }
 
 function draw(map, w, h, x, y, z){
-    ss.sendText(now() + 'PaintingGenerator: Start drawing','§e');
-    ss.sendText(now() + 'PaintingGenerator: Time need: ' + (map.length / 100) + 's.','§e');
+    ss.sendText(ss.now() + 'PaintingGenerator: Start drawing','§e');
+    ss.sendText(ss.now() + 'PaintingGenerator: Time need: ' + (map.length / 100) + 's.','§e');
     let max = w + x;
     let min = x;
     let t = 0;
-    let that = ss;
     let $i = setInterval( () => {
+	    if(ss.stopall){
+		    ss.stopall=false;
+		    ss.sendText(ss.now()+"PaintingGenerator: Generate stopped.");
+		    clearInterval($i);
+		    return;
+	    }
       if(x == max){
         z = z + 1;
         x = min;
       }
 
-      that.session.sendCommand([
+      ss.sendCommand([
         'setblock',
         x = x + 1,
         y,
@@ -113,16 +117,11 @@ function draw(map, w, h, x, y, z){
 
       t++;
       if(t == map.length){
-	      ss.sendText(now() + 'PaintingGenerator: Done.','§e');
+	      ss.sendText(ss.now() + 'PaintingGenerator: Done.','§e');
         clearInterval($i);
       }
     }, 10);
   }
-
-function now(){
-  let date = new Date();
-  return ['[',date.toTimeString().slice(0, 8),']'].join('');
-}
 
 
 module.exports=main;
