@@ -1,11 +1,6 @@
 const EventEmitter = require('events');
 const WebSocket = require('ws');
 const crypto = require('crypto');
-let History = {
-  position:[],
-  locate:[],
-  players:[]
-}
 class WSServer extends WebSocket.Server {
     constructor (port, processor) {
         super({ port: port });
@@ -70,54 +65,6 @@ class Session extends EventEmitter {
         this.socket.send(JSON.stringify(json));
         return json.header.requestId;
     }
-
-    getHistory(type, key){
-      if(key == 'last'){
-        switch (type) {
-          case 'position':
-          return History.position[History.position.length - 1];
-          break;
-          case 'locate':
-          return History.locate[History.locate.length - 1];
-          break;
-          case 'players':
-          return History.players[History.players.length -1];
-          break;
-          default:break;
-        }
-      }
-      else{
-        switch (type) {
-          case 'position':
-          return History.position[key];
-          break;
-          case 'locate':
-          return History.locate[key];
-          break;
-          case 'players':
-          return History.players[key];
-          break;
-          default:break;
-        }
-      }
-    }
-
-	killHistory(type, key){
-      if(key == 'last'){
-        switch (type) {
-          case 'position':
-          History.position[History.position.length - 1]=null;
-          break;
-          case 'locate':
-          History.locate[History.locate.length - 1]=null;
-          break;
-          case 'players':
-          History.players[History.players.length -1]=null;
-          break;
-          default:break;
-        }
-      }else{throw new Error("killHistory only can kill last.");}
-    }
 }
 
 module.exports = WSServer;
@@ -181,11 +128,4 @@ function buildHeader(purpose) {
         messagePurpose: purpose,
         messageType: 'commandRequest'
     };
-}
-
-function toArray(str){
-  if(!!str.split(',')){
-    return str;
-  }
-  return arr = str.split(',');
 }

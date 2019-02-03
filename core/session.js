@@ -220,8 +220,6 @@ class BuildSession {
   }
 
   getValue(type, other){
-    let that = this;
-
     if(type == 'pos' || type == 'position'){
       this.session.sendCommand(['testforblock','~','~','~','air'].join(' '),(body) => {
         let pos = [body.position.x,body.position.y,body.position.z];
@@ -234,9 +232,9 @@ class BuildSession {
     else if(type == 'player' || type == 'players'){
       this.session.sendCommand('listd',(body) => {
         let $players = body.players;
-        $history.players.push($players);
+        $history.players.push(toArray($players));
 
-        console.log($players)
+        console.log($history.players[$history.players.length - 1]);
         let $p = '';
         for(let i = 0 ; i < $history.players[$history.players.length - 1].length ; i++){
           $p = [$p,i,'.',$history.players[$history.players.length - 1][i],'; '].join('');
@@ -427,7 +425,10 @@ function onPlayerMessage(body){
 }
 
 function toArray(str){
-  return arr = str.split(',');
+  if(!!str.split(',')){
+    return [str];
+  }
+  return str.split(',');
 }
 
 function now(){

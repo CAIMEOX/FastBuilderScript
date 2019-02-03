@@ -1,5 +1,5 @@
 # FastBuilder
-![](./images/FastBuilder.jpg)
+![](./images/FastBuilder.png)
 一个为Minecraft Bedrock设计的快速建造程序.
 FastBuilder是一个NodeJS程序，它让Minecraft复杂的结构设计变得简单！
 
@@ -22,7 +22,7 @@ $ node Main.js
 ### 依赖项
 
 ```
-$ npm install ws
+$ npm install ws get-pixels
 ```
 
 ### 开始使用
@@ -148,6 +148,12 @@ $ node Main.js -debug
 ### Other Contributors
 * [**Torrekie**](https://github.com/Torrekie)
 * [**LNSSPsd**](https://github.com/LNSSPsd)
+
+## 技术交流
+### Telegram:
+t.me/FastBuilder
+### QQ群:
+790245783
 ## 版权许可证
 
 此项目使用  [GPL](LICENSE) LICENSE
