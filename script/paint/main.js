@@ -37,15 +37,13 @@ method = method == 'normal' ? 'replace':[method,$block,$data].join(' ');
 
         ss.sendText(ss.now() + 'Loading pixels painting module..','§e');
 
-      ss.sendText(ss.now() + 'Please wait patiently!');
-
             Paint(build.path, position[0], position[1], position[2]);
 }
 }
 
 function main(api){
 	ss=api;
-	ss.subscribe("paint",dopaint);
+	ss.registerCommand("paint",dopaint);
 	ss.registerArgs("path","-z","--path");
 	ss.registerHelp("paint","paint -z <path:String>");
 	console.log("PaintingGenerator script loaded.");
@@ -98,7 +96,7 @@ function draw(map, w, h, x, y, z){
     let $i = setInterval( () => {
 	    if(ss.stopall){
 		    ss.stopall=false;
-		    ss.sendText(ss.now()+"PaintingGenerator: Generate stopped.");
+		    ss.sendText(ss.now()+"PaintingGenerator: Generate stopped.","§e");
 		    clearInterval($i);
 		    return;
 	    }
@@ -125,4 +123,4 @@ function draw(map, w, h, x, y, z){
   }
 
 
-module.exports=main;
+module.exports=[main,"PaintingGenerator",[0,0,1]];

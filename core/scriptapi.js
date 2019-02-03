@@ -4,9 +4,10 @@ let session;
 class ScriptApi{
 	constructor(ss){
 		session=ss;
+		console.log("ScriptAPI has been loaded!");
 	}
 
-	subscribe(method,cb){
+	registerCommand(method,cb){
 		session.$scrdo(0,method,cb);
 	}
 

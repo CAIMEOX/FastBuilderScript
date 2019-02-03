@@ -38,8 +38,14 @@ class BuildSession {
       $data:0,
       entity:'ender_crystal'
     }
+	let scrtapi=new ScriptApi(this);
 	for(let i of scripts){
-		i(new ScriptApi(this));
+		if(i[0]==undefined||i[1]==undefined||typeof(i[1])!="string"||i[2]==undefined||i[2].push==undefined){
+			console.log("We found a invalid script,Skipping...");
+			continue;
+		}
+		console.log("Loading script: %s,Version: %d.%d.%d",i[1],i[2][0],i[2][1],i[2][2]);
+		i[0](scrtapi);
 	}
   }
 
